@@ -1,13 +1,13 @@
 pragma solidity =0.5.16;
 
-import './interfaces/IBakerySwapBEP20.sol';
-import '@BakeryProject/bakery-swap-lib/contracts/math/SafeMath.sol';
+import './interfaces/IPlateSwapBEP20.sol';
+import '@PlateSwap/plate-swap-lib/contracts/math/SafeMath.sol';
 
-contract BakerySwapBEP20 is IBakerySwapBEP20 {
+contract PlateSwapBEP20 is IPlateSwapBEP20 {
     using SafeMath for uint256;
 
-    string public constant name = 'Bakery LPs';
-    string public constant symbol = 'BLP';
+    string public constant name = 'Plate LPs';
+    string public constant symbol = 'PLP';
     uint8 public constant decimals = 18;
     uint256 public totalSupply;
     mapping(address => uint256) public balanceOf;
@@ -99,7 +99,7 @@ contract BakerySwapBEP20 is IBakerySwapBEP20 {
         bytes32 r,
         bytes32 s
     ) external {
-        require(deadline >= block.timestamp, 'BakerySwapBEP20: EXPIRED');
+        require(deadline >= block.timestamp, 'PlateSwapBEP20: EXPIRED');
         bytes32 digest = keccak256(
             abi.encodePacked(
                 '\x19\x01',
@@ -108,7 +108,7 @@ contract BakerySwapBEP20 is IBakerySwapBEP20 {
             )
         );
         address recoveredAddress = ecrecover(digest, v, r, s);
-        require(recoveredAddress != address(0) && recoveredAddress == owner, 'BakerySwapBEP20: INVALID_SIGNATURE');
+        require(recoveredAddress != address(0) && recoveredAddress == owner, 'PlateSwapBEP20: INVALID_SIGNATURE');
         _approve(owner, spender, value);
     }
 }

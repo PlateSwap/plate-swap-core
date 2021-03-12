@@ -1,4 +1,4 @@
-# Bakery Swap Core
+# PlateSwap Core
 
 
 # Local Development

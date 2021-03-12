@@ -3,26 +3,32 @@ import * as ethers from 'ethers'
 import {AddressZero} from 'ethers/constants'
 import {deployContract, solidity} from 'ethereum-waffle'
 
-import BakerySwapFactory from '../build/BakerySwapFactory.json'
+import PlateSwapFactory from '../build/PlateSwapFactory.json'
 
 chai.use(solidity)
 
-describe('BakerySwapFactory', () => {
+describe('PlateSwapFactory', () => {
+  /**
+   * Use MetaMask to connect to binance smart chain and get test BNB's
+   * Add your wallets private key here for testing, add also he public key to wallet
+   */
   const provider = new ethers.providers.JsonRpcProvider('https://data-seed-prebsc-1-s1.binance.org:8545')
-  // const provider = ethers.getDefaultProvider('rinkeby')
+  //const provider = ethers.getDefaultProvider('rinkeby')
   const privateKey = ''
   const wallet = new ethers.Wallet(privateKey, provider)
+
   const overrides = {
     gasLimit: 9999999,
-    gasPrice: 390000000000
+    gasPrice: 39000000000
   }
 
   it('deploy', async () => {
-    console.log(`start deployContract swapFactory`)
+    console.log('start deployContract swapFactory')
+
     const swapFactory = await deployContract(
       wallet,
-      BakerySwapFactory,
-      ['0xf9e89b5aCA2e6061d22EA98CBCc2d826E3f9E4b1'],
+      PlateSwapFactory,
+      ['0x7AD2EB2564937E7b4a9f7BaDd02FEF0b1F460469'],
       overrides
     )
     console.log(`contract swapFactory address ${swapFactory.address}`)
@@ -58,5 +64,12 @@ describe('BakerySwapFactory', () => {
      * contract swapFactory address 0x9A0615b24C8064F26A3030507c2B5f0DB7F975b4
      * contract swapFactory deploy transaction hash 0x55adfd1c40513a8317ad748362962e1a52b7ec5cd0173c7bd5bf39cd962ce43b
      */
+
+    /**  PlateSwapFactory
+      start deployContract swapFactory
+      contract swapFactory address 0xe700d630792d3673d39b4C27a62F4E3296C1f623
+      contract swapFactory deploy transaction hash 0x419c02fd545f0fd4b2eae3500da916b43b43921dc3f957e4301c3eca1dfd7f8b
+    finish deployContract swapFatory */
+
   })
 })

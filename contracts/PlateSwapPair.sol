@@ -1,12 +1,12 @@
 pragma solidity =0.5.16;
 
-import './interfaces/IBakerySwapPair.sol';
-import './BakerySwapBEP20.sol';
+import './interfaces/IPlateSwapPair.sol';
+import './PlateSwapBEP20.sol';
 import './libraries/UQ112x112.sol';
-import '@BakeryProject/bakery-swap-lib/contracts/token/BEP20/IBEP20.sol';
-import './interfaces/IBakerySwapFactory.sol';
+import '@PlateSwap/plate-swap-lib/contracts/token/BEP20/IBEP20.sol';
+import './interfaces/IPlateSwapFactory.sol';
 
-contract BakerySwapPair is IBakerySwapPair, BakerySwapBEP20 {
+contract PlateSwapPair is IPlateSwapPair, PlateSwapBEP20 {
     using SafeMath for uint256;
     using UQ112x112 for uint224;
 
@@ -27,7 +27,7 @@ contract BakerySwapPair is IBakerySwapPair, BakerySwapBEP20 {
 
     uint256 private unlocked = 1;
     modifier lock() {
-        require(unlocked == 1, 'BakerySwapPair: LOCKED');
+        require(unlocked == 1, 'PlateSwapPair: LOCKED');
         unlocked = 0;
         _;
         unlocked = 1;
@@ -53,7 +53,7 @@ contract BakerySwapPair is IBakerySwapPair, BakerySwapBEP20 {
         uint256 value
     ) private {
         (bool success, bytes memory data) = token.call(abi.encodeWithSelector(SELECTOR, to, value));
-        require(success && (data.length == 0 || abi.decode(data, (bool))), 'BakerySwapPair: TRANSFER_FAILED');
+        require(success && (data.length == 0 || abi.decode(data, (bool))), 'PlateSwapPair: TRANSFER_FAILED');
     }
 
     event Mint(address indexed sender, uint256 amount0, uint256 amount1);
@@ -74,7 +74,7 @@ contract BakerySwapPair is IBakerySwapPair, BakerySwapBEP20 {
 
     // called once by the factory at time of deployment
     function initialize(address _token0, address _token1) external {
-        require(msg.sender == factory, 'BakerySwapPair: FORBIDDEN'); // sufficient check
+        require(msg.sender == factory, 'PlateSwapPair: FORBIDDEN'); // sufficient check
         token0 = _token0;
         token1 = _token1;
     }
@@ -86,7 +86,7 @@ contract BakerySwapPair is IBakerySwapPair, BakerySwapBEP20 {
         uint112 _reserve0,
         uint112 _reserve1
     ) private {
-        require(balance0 <= uint112(-1) && balance1 <= uint112(-1), 'BakerySwapPair: OVERFLOW');
+        require(balance0 <= uint112(-1) && balance1 <= uint112(-1), 'PlateSwapPair: OVERFLOW');
         uint32 blockTimestamp = uint32(block.timestamp % 2**32);
         uint32 timeElapsed = blockTimestamp - blockTimestampLast; // overflow is desired
         if (timeElapsed > 0 && _reserve0 != 0 && _reserve1 != 0) {
@@ -102,7 +102,7 @@ contract BakerySwapPair is IBakerySwapPair, BakerySwapBEP20 {
 
     // if fee is on, mint liquidity equivalent to 1/6th of the growth in sqrt(k)
     function _mintFee(uint112 _reserve0, uint112 _reserve1) private returns (bool feeOn) {
-        address feeTo = IBakerySwapFactory(factory).feeTo();
+        address feeTo = IPlateSwapFactory(factory).feeTo();
         feeOn = feeTo != address(0);
         uint256 _kLast = kLast; // gas savings
         if (feeOn) {
@@ -137,7 +137,7 @@ contract BakerySwapPair is IBakerySwapPair, BakerySwapBEP20 {
         } else {
             liquidity = SafeMath.min(amount0.mul(_totalSupply) / _reserve0, amount1.mul(_totalSupply) / _reserve1);
         }
-        require(liquidity > 0, 'BakerySwapPair: INSUFFICIENT_LIQUIDITY_MINTED');
+        require(liquidity > 0, 'PlateSwapPair: INSUFFICIENT_LIQUIDITY_MINTED');
         _mint(to, liquidity);
 
         _update(balance0, balance1, _reserve0, _reserve1);
@@ -158,7 +158,7 @@ contract BakerySwapPair is IBakerySwapPair, BakerySwapBEP20 {
         uint256 _totalSupply = totalSupply; // gas savings, must be defined here since totalSupply can update in _mintFee
         amount0 = liquidity.mul(balance0) / _totalSupply; // using balances ensures pro-rata distribution
         amount1 = liquidity.mul(balance1) / _totalSupply; // using balances ensures pro-rata distribution
-        require(amount0 > 0 && amount1 > 0, 'BakerySwapPair: INSUFFICIENT_LIQUIDITY_BURNED');
+        require(amount0 > 0 && amount1 > 0, 'PlateSwapPair: INSUFFICIENT_LIQUIDITY_BURNED');
         _burn(address(this), liquidity);
         _safeTransfer(_token0, to, amount0);
         _safeTransfer(_token1, to, amount1);
@@ -176,9 +176,9 @@ contract BakerySwapPair is IBakerySwapPair, BakerySwapBEP20 {
         uint256 amount1Out,
         address to
     ) external lock {
-        require(amount0Out > 0 || amount1Out > 0, 'BakerySwapPair: INSUFFICIENT_OUTPUT_AMOUNT');
+        require(amount0Out > 0 || amount1Out > 0, 'PlateSwapPair: INSUFFICIENT_OUTPUT_AMOUNT');
         (uint112 _reserve0, uint112 _reserve1, ) = getReserves(); // gas savings
-        require(amount0Out < _reserve0 && amount1Out < _reserve1, 'BakerySwapPair: INSUFFICIENT_LIQUIDITY');
+        require(amount0Out < _reserve0 && amount1Out < _reserve1, 'PlateSwapPair: INSUFFICIENT_LIQUIDITY');
 
         uint256 balance0;
         uint256 balance1;
@@ -186,7 +186,7 @@ contract BakerySwapPair is IBakerySwapPair, BakerySwapBEP20 {
             // scope for _token{0,1}, avoids stack too deep errors
             address _token0 = token0;
             address _token1 = token1;
-            require(to != _token0 && to != _token1, 'BakerySwapPair: INVALID_TO');
+            require(to != _token0 && to != _token1, 'PlateSwapPair: INVALID_TO');
             if (amount0Out > 0) _safeTransfer(_token0, to, amount0Out); // optimistically transfer tokens
             if (amount1Out > 0) _safeTransfer(_token1, to, amount1Out); // optimistically transfer tokens
             balance0 = IBEP20(_token0).balanceOf(address(this));
@@ -194,14 +194,14 @@ contract BakerySwapPair is IBakerySwapPair, BakerySwapBEP20 {
         }
         uint256 amount0In = balance0 > _reserve0 - amount0Out ? balance0 - (_reserve0 - amount0Out) : 0;
         uint256 amount1In = balance1 > _reserve1 - amount1Out ? balance1 - (_reserve1 - amount1Out) : 0;
-        require(amount0In > 0 || amount1In > 0, 'BakerySwapPair: INSUFFICIENT_INPUT_AMOUNT');
+        require(amount0In > 0 || amount1In > 0, 'PlateSwapPair: INSUFFICIENT_INPUT_AMOUNT');
         {
             // scope for reserve{0,1}Adjusted, avoids stack too deep errors
             uint256 balance0Adjusted = balance0.mul(1000).sub(amount0In.mul(3));
             uint256 balance1Adjusted = balance1.mul(1000).sub(amount1In.mul(3));
             require(
                 balance0Adjusted.mul(balance1Adjusted) >= uint256(_reserve0).mul(_reserve1).mul(1000**2),
-                'BakerySwapPair: K'
+                'PlateSwapPair: K'
             );
         }
 

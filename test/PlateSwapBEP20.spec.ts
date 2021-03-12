@@ -8,13 +8,13 @@ import {hexToAscii} from 'web3-utils'
 
 import {expandTo18Decimals, getApprovalDigest} from './shared/utilities'
 
-import BakerySwapBEP20 from '../build/BakerySwapBEP20.json'
+import PlateSwapBEP20 from '../build/PlateSwapBEP20.json'
 
 chai.use(solidity)
 
 const TEST_AMOUNT = expandTo18Decimals(10)
 
-describe('BakerySwapBEP20', () => {
+describe('PlateSwapBEP20', () => {
   const provider = new MockProvider({
     hardfork: 'istanbul',
     mnemonic: 'horn horn horn horn horn horn horn horn horn horn horn horn',
@@ -24,13 +24,13 @@ describe('BakerySwapBEP20', () => {
 
   let token: Contract
   beforeEach(async () => {
-    token = await deployContract(wallet, BakerySwapBEP20)
+    token = await deployContract(wallet, PlateSwapBEP20)
   })
 
   it('name, symbol, decimals, totalSupply, balanceOf, DOMAIN_SEPARATOR, PERMIT_TYPEHASH', async () => {
     const name = await token.name()
-    expect(name).to.eq('Swap')
-    expect(await token.symbol()).to.eq('SWAP')
+    expect(name).to.eq('Plate LPs')
+    expect(await token.symbol()).to.eq('PLP')
     expect(await token.decimals()).to.eq(18)
     expect(await token.DOMAIN_SEPARATOR()).to.eq(
       keccak256(
