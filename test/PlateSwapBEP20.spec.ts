@@ -1,12 +1,12 @@
-import chai, {expect} from 'chai'
-import {Contract} from 'ethers'
-import {MaxUint256} from 'ethers/constants'
-import {bigNumberify, hexlify, keccak256, defaultAbiCoder, toUtf8Bytes} from 'ethers/utils'
-import {solidity, MockProvider, deployContract} from 'ethereum-waffle'
-import {ecsign} from 'ethereumjs-util'
-import {hexToAscii} from 'web3-utils'
+import chai, { expect } from 'chai'
+import { Contract } from 'ethers'
+import { MaxUint256 } from 'ethers/constants'
+import { bigNumberify, hexlify, keccak256, defaultAbiCoder, toUtf8Bytes } from 'ethers/utils'
+import { solidity, MockProvider, deployContract } from 'ethereum-waffle'
+import { ecsign } from 'ethereumjs-util'
+import { hexToAscii } from 'web3-utils'
 
-import {expandTo18Decimals, getApprovalDigest} from './shared/utilities'
+import { expandTo18Decimals, getApprovalDigest } from './shared/utilities'
 
 import PlateSwapBEP20 from '../build/PlateSwapBEP20.json'
 
@@ -58,12 +58,12 @@ describe('PlateSwapBEP20', () => {
     const deadline = MaxUint256
     const digest = await getApprovalDigest(
       token,
-      {owner: wallet.address, spender: other.address, value: TEST_AMOUNT},
+      { owner: wallet.address, spender: other.address, value: TEST_AMOUNT },
       nonce,
       deadline
     )
 
-    const {v, r, s} = ecsign(Buffer.from(digest.slice(2), 'hex'), Buffer.from(wallet.privateKey.slice(2), 'hex'))
+    const { v, r, s } = ecsign(Buffer.from(digest.slice(2), 'hex'), Buffer.from(wallet.privateKey.slice(2), 'hex'))
 
     await expect(token.permit(wallet.address, other.address, TEST_AMOUNT, deadline, v, hexlify(r), hexlify(s)))
       .to.emit(token, 'Approval')

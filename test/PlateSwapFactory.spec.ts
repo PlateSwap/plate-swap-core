@@ -1,7 +1,7 @@
 import chai from 'chai'
 import * as ethers from 'ethers'
-import {AddressZero} from 'ethers/constants'
-import {deployContract, solidity} from 'ethereum-waffle'
+import { AddressZero } from 'ethers/constants'
+import { deployContract, solidity } from 'ethereum-waffle'
 
 import PlateSwapFactory from '../build/PlateSwapFactory.json'
 
@@ -70,6 +70,5 @@ describe('PlateSwapFactory', () => {
       contract swapFactory address 0xe700d630792d3673d39b4C27a62F4E3296C1f623
       contract swapFactory deploy transaction hash 0x419c02fd545f0fd4b2eae3500da916b43b43921dc3f957e4301c3eca1dfd7f8b
     finish deployContract swapFatory */
-
   })
 })
